@@ -1,0 +1,123 @@
+diff --git a/augmentations.py b/../../../byol-a/byol_a/augmentations.py
+index bb29f6b..979a5d1 100644
+--- a/augmentations.py
++++ b/../../../byol-a/byol_a/augmentations.py
+@@ -1,73 +1,11 @@
+ """BYOL for Audio: Augmentation modules.
+-"""
+-
+-import random
+-
+-import numpy as np
+-import torch
+-import torch.nn as nn
+-import torch.nn.functional as F
+-import torchaudio
+-
+-
+-class SpecAugment(nn.Module):
+-    """
+-    SpecAugment module, without time warping.
+-
+-    Original paper: 1904.08779
+-
+-    "Time warping contributes, but is not a major factor in improving performance."
+-    """
+-    def __init__(self, pF=0.1, mF=2, pT=0.1, mT=2):
+-        super().__init__()
+-        self.pF = pF
+-        self.mF = mF
+-        self.pT = pT
+-        self.mT = mT
+-
+-    def forward(self, x):
+-        _, n_mels, n_steps = x.shape
+-
+-        mask_value = x.mean()
+ 
+-        # Frequency masking
+-        freq_mask_param = self.pF * n_mels
+-        for _ in range(self.mF):
+-            x = torchaudio.transforms.FrequencyMasking(freq_mask_param)(x, mask_value)
+-
+-        # Time masking
+-        time_mask_param = self.pT * n_steps
+-        for _ in range(self.mT):
+-            x = torchaudio.transforms.TimeMasking(time_mask_param)(x, mask_value)
+-
+-        return x
+-
+-    def __repr__(self):
+-        return f'{self.__class__.__name__}(pF={self.pF}, mF={self.mF}, pT={self.pT}, mT={self.mT})'
+-
+-
+-class TimeFrequencyMasking(nn.Module):
+-    """Time-frequency masking option inspired by: https://arxiv.org/abs/2102.01243
+-
+-    Attributes
+-    ----------
+-    freq_mask_param: int, default=48
+-        maximum possible length of the mask. Indices uniformly sampled from [0, freq_mask_param)
+-    time_mask_param: int, default=192
+-        maximum possible length of the mask. Indices uniformly sampled from [0, time_mask_param)
+-    """
+-    def __init__(self, freq_mask_param=48, time_mask_param=192):
+-        super().__init__()
+-        self.freq_mask = torchaudio.transforms.FrequencyMasking(freq_mask_param)
+-        self.time_mask = torchaudio.transforms.TimeMasking(time_mask_param)
+-
+-    def forward(self, x):
+-        x = self.freq_mask(x)
+-        x = self.time_mask(x)
+-        return x
++Legends:
++    F: Number of frequency bins.
++    T: Number of time frames.
++"""
+ 
+-    def __repr__(self):
+-        return f'{self.__class__.__name__}(F={self.freq_mask_param}, T={self.time_mask_param})'
++from .common import (torch, nn, F, torchaudio, AF, AT, np, random, logging)
+ 
+ 
+ class RandomResizeCrop(nn.Module):
+@@ -105,16 +43,13 @@ class RandomResizeCrop(nn.Module):
+         _, lh, lw = virtual_crop_area.shape
+         c, h, w = lms.shape
+         x, y = (lw - w) // 2, (lh - h) // 2
+-        virtual_crop_area[:, y:y + h, x:x + w] = lms
++        virtual_crop_area[:, y:y+h, x:x+w] = lms
+         # get random area
+         i, j, h, w = self.get_params(virtual_crop_area.shape[-2:], lms.shape[-2:], self.time_scale, self.freq_scale)
+-        crop = virtual_crop_area[:, i:i + h, j:j + w]
++        crop = virtual_crop_area[:, i:i+h, j:j+w]
+         # print(f'shapes {virtual_crop_area.shape} {crop.shape} -> {lms.shape}')
+-        lms = F.interpolate(
+-            crop.unsqueeze(0),
+-            size=lms.shape[-2:],
+-            mode=self.interpolation,
+-            align_corners=True).squeeze(0)
++        lms = F.interpolate(crop.unsqueeze(0), size=lms.shape[-2:],
++            mode=self.interpolation, align_corners=True).squeeze(0)
+         return lms.to(torch.float)
+ 
+     def __repr__(self):
+@@ -154,7 +89,8 @@ class MixupBYOLA(nn.Module):
+             # get z as a mixing background sound
+             z = self.memory_bank[np.random.randint(len(self.memory_bank))]
+             # mix them
+-            mixed = log_mixup_exp(x, z, 1. - alpha) if self.log_mixup_exp else alpha * z + (1. - alpha) * x
++            mixed = log_mixup_exp(x, z, 1. - alpha) if self.log_mixup_exp \
++                    else alpha * z + (1. - alpha) * x
+         else:
+             mixed = x
+         # update memory bank
+@@ -225,7 +161,7 @@ class RunningVariance:
+         self.mean = mean
+ 
+     def put(self, x):
+-        self.s2.put((x - self.mean) ** 2)
++        self.s2.put((x - self.mean) **2)
+ 
+     def __call__(self):
+         return self.s2()

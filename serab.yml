@@ -20,7 +20,7 @@ dependencies:
   - scikit-learn
   - scipy
   - torchaudio=0.9.0=py38
-  - torchtext=0.10.0
+  - torchtext=0.10.0=py38
   - torchvision=0.10.0=py38_cu111
   - pip:
     - librosa==0.8.1
