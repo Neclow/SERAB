@@ -1,0 +1,30 @@
+stages:
+  # train_default:
+  #   cmd: python train.py default
+
+  benchmark_crema_d:
+    cmd: python clf_benchmark.py --model_name default --dataset_name crema_d
+
+  benchmark_ravdess:
+    cmd: python clf_benchmark.py --model_name default --dataset_name ravdess
+
+  benchmark_savee:
+    cmd: python clf_benchmark.py --model_name default --dataset_name savee
+
+  benchmark_cafe:
+    cmd: python clf_benchmark.py --model_name default --dataset_name cafe
+
+  benchmark_emodb:
+    cmd: python clf_benchmark.py --model_name default --dataset_name emodb
+
+  benchmark_emovo:
+    cmd: python clf_benchmark.py --model_name default --dataset_name emovo
+
+  benchmark_shemo:
+    cmd: python clf_benchmark.py --model_name default --dataset_name shemo
+
+  benchmark_aesdd:
+    cmd: python clf_benchmark.py --model_name default --dataset_name aesdd
+
+  benchmark_iem4:
+    cmd: python clf_benchmark.py --model_name default --dataset_name iem4
