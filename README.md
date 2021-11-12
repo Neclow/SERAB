@@ -19,6 +19,24 @@ To reproduce the environment, run:
 conda env create -f serab.yml
 ```
 
+To install the external source files from patches, copy the following after cloning the repo:
+```console
+cd SERAB/
+curl -O https://raw.githubusercontent.com/nttcslab/byol-a/f2451c366d02be031a31967f494afdf3485a85ff/config.yaml
+patch --ignore-whitespace < config.diff
+curl -O https://raw.githubusercontent.com/nttcslab/byol-a/f2451c366d02be031a31967f494afdf3485a85ff/train.py
+patch < train.diff
+cd byol_a/
+curl -O https://raw.githubusercontent.com/nttcslab/byol-a/f2451c366d02be031a31967f494afdf3485a85ff/byol_a/augmentations.py
+patch < augmentations.diff
+curl -O https://raw.githubusercontent.com/nttcslab/byol-a/f2451c366d02be031a31967f494afdf3485a85ff/byol_a/common.py
+patch < common.diff
+curl -O https://raw.githubusercontent.com/nttcslab/byol-a/f2451c366d02be031a31967f494afdf3485a85ff/byol_a/dataset.py
+patch < dataset.diff
+curl -O https://raw.githubusercontent.com/nttcslab/byol-a/f2451c366d02be031a31967f494afdf3485a85ff/byol_a/models.py
+mv models.py models/audio_ntt.py
+```
+
 ## Evaluate a (pre-trained model) using SERAB
 In this simplified version, only PyTorch models can be used.
 

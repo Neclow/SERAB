@@ -1,92 +1,90 @@
-diff --git a/dataset.py b/../../../byol-a/byol_a/dataset.py
-index 765013b..d3902ab 100644
---- a/dataset.py
-+++ b/../../../byol-a/byol_a/dataset.py
-@@ -1,14 +1,7 @@
+--- dataset.py
++++ dataset.py
+@@ -1,7 +1,14 @@
  """BYOL for Audio: Dataset class definition."""
- 
--import random
--
-+from .common import (random, np, torch, F, torchaudio, AF, AT, Dataset)
+
+-from .common import (random, np, torch, F, torchaudio, AF, AT, Dataset)
++import random
++
  import librosa
--import numpy as np
--import torch
--import torch.nn.functional as F
--import torchaudio
--
--from torch.utils.data import Dataset
- 
- 
++import numpy as np
++import torch
++import torch.nn.functional as F
++import torchaudio
++
++from torch.utils.data import Dataset
+
+
  class MelSpectrogramLibrosa:
-@@ -34,11 +27,11 @@ class WaveInLMSOutDataset(Dataset):
+@@ -27,11 +34,11 @@ class WaveInLMSOutDataset(Dataset):
          cfg: Configuration settings.
          audio_files: List of audio file pathnames.
          labels: List of labels corresponding to the audio files.
--        transform: Transforms (augmentations), callable.
-+        tfms: Transforms (augmentations), callable.
+-        tfms: Transforms (augmentations), callable.
++        transform: Transforms (augmentations), callable.
          use_librosa: True if using librosa for converting audio to log-mel spectrogram (LMS).
      """
- 
--    def __init__(self, cfg, audio_files, labels, transform, use_librosa=False):
-+    def __init__(self, cfg, audio_files, labels, tfms, use_librosa=False):
+
+-    def __init__(self, cfg, audio_files, labels, tfms, use_librosa=False):
++    def __init__(self, cfg, audio_files, labels, transform, use_librosa=False):
          # argment check
          assert (labels is None) or (len(audio_files) == len(labels)), 'The number of audio files and labels has to be the same.'
          super().__init__()
-@@ -47,7 +40,7 @@ class WaveInLMSOutDataset(Dataset):
+@@ -40,7 +47,7 @@ class WaveInLMSOutDataset(Dataset):
          self.cfg = cfg
          self.files = audio_files
          self.labels = labels
--        self.transform = transform
-+        self.tfms = tfms
+-        self.tfms = tfms
++        self.transform = transform
          self.unit_length = int(cfg.unit_sec * cfg.sample_rate)
          self.to_melspecgram = MelSpectrogramLibrosa(
              fs=cfg.sample_rate,
-@@ -56,7 +49,7 @@ class WaveInLMSOutDataset(Dataset):
+@@ -49,7 +56,7 @@ class WaveInLMSOutDataset(Dataset):
              n_mels=cfg.n_mels,
              fmin=cfg.f_min,
              fmax=cfg.f_max,
--        ) if use_librosa else torchaudio.transforms.MelSpectrogram(
-+        ) if use_librosa else AT.MelSpectrogram(
+-        ) if use_librosa else AT.MelSpectrogram(
++        ) if use_librosa else torchaudio.transforms.MelSpectrogram(
              sample_rate=cfg.sample_rate,
              n_fft=cfg.n_fft,
              win_length=cfg.win_length,
-@@ -72,15 +65,10 @@ class WaveInLMSOutDataset(Dataset):
- 
+@@ -65,10 +72,15 @@ class WaveInLMSOutDataset(Dataset):
+
      def __getitem__(self, idx):
          # load single channel .wav audio
--        # print(self.files[idx])
--        try:
--            wav, sr = torchaudio.load(self.files[idx])
--        except RuntimeError:
--            print(self.files[idx])
--            raise FileNotFoundError(self.files[idx])
-+        wav, sr = torchaudio.load(self.files[idx])
+-        wav, sr = torchaudio.load(self.files[idx])
++        # print(self.files[idx])
++        try:
++            wav, sr = torchaudio.load(self.files[idx])
++        except RuntimeError:
++            print(self.files[idx])
++            raise FileNotFoundError(self.files[idx])
          assert sr == self.cfg.sample_rate, f'Convert .wav files to {self.cfg.sample_rate} Hz. {self.files[idx]} has {sr} Hz.'
          assert wav.shape[0] == 1, f'Convert .wav files to single channel audio, {self.files[idx]} has {wav.shape[0]} channels.'
--        wav = wav[0]  # (1, length) -> (length,)
-+        wav = wav[0] # (1, length) -> (length,)
- 
+-        wav = wav[0] # (1, length) -> (length,)
++        wav = wav[0]  # (1, length) -> (length,)
+
          # zero padding to both ends
          length_adj = self.unit_length - len(wav)
-@@ -89,7 +77,7 @@ class WaveInLMSOutDataset(Dataset):
+@@ -77,7 +89,7 @@ class WaveInLMSOutDataset(Dataset):
              wav = F.pad(wav, (half_adj, length_adj - half_adj))
- 
+
          # random crop unit length wave
--        length_adj = self.unit_length - len(wav)
-+        length_adj = len(wav) - self.unit_length
+-        length_adj = len(wav) - self.unit_length
++        length_adj = self.unit_length - len(wav)
          start = random.randint(0, length_adj) if length_adj > 0 else 0
          wav = wav[start:start + self.unit_length]
- 
-@@ -97,9 +85,10 @@ class WaveInLMSOutDataset(Dataset):
+
+@@ -85,10 +97,9 @@ class WaveInLMSOutDataset(Dataset):
          lms = (self.to_melspecgram(wav) + torch.finfo().eps).log().unsqueeze(0)
- 
+
          # transform (augment)
--        if self.transform:
--            lms = self.transform(lms)
-+        if self.tfms:
-+            lms = self.tfms(lms)
- 
+-        if self.tfms:
+-            lms = self.tfms(lms)
++        if self.transform:
++            lms = self.transform(lms)
+
          if self.labels is not None:
              return lms, torch.tensor(self.labels[idx])
          return lms
-+
+-
