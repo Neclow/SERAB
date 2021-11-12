@@ -16,7 +16,6 @@ from tqdm import tqdm
 from byol_a.common import load_yaml_config
 from byol_a.models.audio_ntt import AudioNTT2020
 from byol_a.models.cvt import CvT
-from byol_a.models.resnetish import resnetish34
 from settings import REQUIRED_SAMPLE_RATE
 
 
