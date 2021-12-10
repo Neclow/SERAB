@@ -7,6 +7,8 @@ This repo contains a "simplified" implementation of [SERAB](https://arxiv.org/ab
 * Benchmark tests for SERAB
 * TFDS scripts to load SERAB data
 
+Update: BYOL-S was one of the strongest submissions of the HEAR NeurIPS 2021 Challenge! Leaderboard results: https://neuralaudio.ai/hear2021-results.html
+
 ## Demo
 * A quick demo detailing the SERAB evaluation procedure on a Colab notebook is available [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1EiHujFVt9Hb0VbI0b5RaMfYOYaHq9NrQ?usp=sharing)
 
