@@ -168,7 +168,6 @@ def load_model(model_name, cfg, device, ckpt_folder='checkpoints/'):
             feature_set=opensmile.FeatureSet.ComParE_2016,
             feature_level=opensmile.FeatureLevel.Functionals,
         )
-        embedding = model.process_signal(float_audio, REQUIRED_SAMPLE_RATE)
     else:
         raise ValueError('Model not found.')
 
@@ -263,6 +262,9 @@ def generate_embeddings(
         elif model_name == 'yamnet':
             _, embedding, _ = model(float_audio)
             embedding = np.mean(embedding, axis=0, keepdims=True)
+
+        elif model_name == 'opensmile':
+            embedding = model.process_signal(float_audio, REQUIRED_SAMPLE_RATE)
 
         else:
             float_audio = torch.tensor(float_audio).unsqueeze(0)
