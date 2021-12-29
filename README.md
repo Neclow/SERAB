@@ -91,6 +91,7 @@ Link to the SERAB Datasets:
 * RAVDESS: https://smartlaboratory.org/ravdess/
 * SAVEE (restricted access): http://kahlan.eps.surrey.ac.uk/savee/Download.html
 * ShEMO: https://github.com/mansourehk/ShEMO
+* SUBESCO: https://zenodo.org/record/4526477#.YcyUeGjMJPY 
 
 3. Build each dataset using the TFDS CLI:
 ```console
