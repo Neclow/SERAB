@@ -150,7 +150,7 @@ class Emovo(tfds.core.GeneratorBasedBuilder):
 
         if not tf.io.gfile.exists(zip_path):
             raise AssertionError(
-                'emoDB requires manual download of the data. Please download '
+                'EMOVO requires manual download of the data. Please download '
                 'the audio data and place it into: {}'.format(zip_path))
 
         extract_path = dl_manager.extract(zip_path)
@@ -160,7 +160,8 @@ class Emovo(tfds.core.GeneratorBasedBuilder):
             speaker_id = parse_name(os.path.basename(fname), from_i=4, to_i=6)
             items_and_groups.append((fname, speaker_id))
 
-        split_probs = [('train', 0.6), ('validation', 0.2), ('test', 0.2)]  # Like SAVEE (https://github.com/tensorflow/datasets/blob/master/tensorflow_datasets/audio/savee.py)
+        # Like SAVEE (https://github.com/tensorflow/datasets/blob/master/tensorflow_datasets/audio/savee.py)
+        split_probs = [('train', 0.6), ('validation', 0.2), ('test', 0.2)]
 
         splits = _get_inter_splits_by_group(items_and_groups, split_probs, 0)
 

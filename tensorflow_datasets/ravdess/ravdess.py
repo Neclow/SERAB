@@ -148,7 +148,7 @@ class Ravdess(tfds.core.GeneratorBasedBuilder):
 
         if not tf.io.gfile.exists(zip_path):
             raise AssertionError(
-                f'emoDB requires manual download of the data. Please download '
+                f'RAVDESS requires manual download of the data. Please download '
                 f'the audio data at {_HOMEPAGE} and place it into: {zip_path}')
 
         extract_path = dl_manager.extract(zip_path)
