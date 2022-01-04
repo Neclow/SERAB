@@ -152,8 +152,11 @@ class Cafe(tfds.core.GeneratorBasedBuilder):
 
         extract_path = dl_manager.extract(zip_path)
 
+        audio_paths = tf.io.gfile.glob('{}/*/*/*.wav'.format(extract_path))
+        audio_paths += tf.io.gfile.glob('{}/Neutre/*.wav'.format(extract_path))
+
         items_and_groups = []
-        for fname in tf.io.gfile.glob('{}/*/*/*.wav'.format(extract_path)):
+        for fname in audio_paths:
             speaker_id = parse_name(os.path.basename(fname), from_i=0, to_i=2)
             items_and_groups.append((fname, speaker_id))
 
