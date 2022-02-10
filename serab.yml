@@ -7,7 +7,7 @@ channels:
 dependencies:
   - cudatoolkit=11.1.74=h6bb024c_0
   - easydict
-  - einops=0.3.0=py_0
+  - einops=0.4.0
   - fire
   - ipywidgets
   - matplotlib
