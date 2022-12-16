@@ -91,9 +91,11 @@ Link to the SERAB Datasets:
 * RAVDESS: https://smartlaboratory.org/ravdess/
 * SAVEE (restricted access): http://kahlan.eps.surrey.ac.uk/savee/Download.html
 * ShEMO: https://github.com/mansourehk/ShEMO
-* SUBESCO: https://zenodo.org/record/4526477#.YcyUeGjMJPY 
+* SUBESCO: https://zenodo.org/record/4526477#.YcyUeGjMJPY
 
-3. Build each dataset using the TFDS CLI:
+3. Ensure all samples in a given datasets are all mono or stereo! You can use ```stereo_to_mono.py``` in serab.utils to convert all stereo audios to mono.
+
+4. Build each dataset using the TFDS CLI:
 ```console
 cd tensorflow_datasets/{DATASET_NAME}
 tfds build  # Download and prepare the dataset to `~/tensorflow_datasets/

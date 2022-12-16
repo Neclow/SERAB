@@ -10,6 +10,7 @@ import torch
 import tensorflow_datasets as tfds
 import tensorflow_hub as hub
 
+from pydub import AudioSegment
 from torchaudio.transforms import MelSpectrogram
 from tqdm import tqdm
 
@@ -329,3 +330,29 @@ def save_results(fname, results_df, results_folder):
         new_all_results_df = pd.concat([results_df, all_results_df], axis=1)
         new_all_results_df = new_all_results_df.reindex(sorted(new_all_results_df.columns), axis=1)
         new_all_results_df.to_csv(save_path)
+
+def stereo2mono(files):
+    """Convert all files from stereo to mono.
+    Note: this would effectively also create a copy of files that were already in a mono format
+
+    Inspired by: https://stackoverflow.com/questions/5120555/how-can-i-convert-a-wav-from-stereo-to-mono-in-python
+    Parameters
+    ----------
+    files : iterable
+        Sequence of files
+    Example use:
+    ```
+    from glob import glob
+    files = glob('path\to\your\audios\*.mp3')
+    stereo2mono(files)
+    ```
+    Then you may remove the files that do not contain the '_mono' tag.
+    """
+    for f in files:
+        # Load audio
+        sound = AudioSegment.from_wav(f)
+        # Convert to mono
+        sound = sound.set_channels(1)
+        # Save file
+        stem, ext = os.path.splitext(f)
+        sound.export(f'{stem}_mono{ext}', format='wav')

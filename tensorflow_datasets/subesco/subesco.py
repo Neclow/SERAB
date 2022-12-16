@@ -9,9 +9,9 @@ import tensorflow_datasets.public_api as tfds
 
 # Markdown description    that will appear on the catalog page.
 _DESCRIPTION = """
-SUBESCO is an audio-only emotional speech corpus of 7000 sentence-level utterances of the Bangla language. 20 professional actors (10 males and 10 females) participated in the recordings 
-of 10 sentences for 7 target emotions. The emotions are Anger, Disgust, Fear, Happiness, Neutral, Sadness and Surprise. Total duration of the corpus is 7 hours 40 min 40 sec.  Total size 
-of the dataset is 2.03 GB. The dataset was evaluated by 50 raters (25 males, 25 females). Human perception test achieved a raw accuracy of 71%.  All the details relating to creation, 
+SUBESCO is an audio-only emotional speech corpus of 7000 sentence-level utterances of the Bangla language. 20 professional actors (10 males and 10 females) participated in the recordings
+of 10 sentences for 7 target emotions. The emotions are Anger, Disgust, Fear, Happiness, Neutral, Sadness and Surprise. Total duration of the corpus is 7 hours 40 min 40 sec.  Total size
+of the dataset is 2.03 GB. The dataset was evaluated by 50 raters (25 males, 25 females). Human perception test achieved a raw accuracy of 71%.  All the details relating to creation,
 evaluation and analysis of SUBESCO have been described in the corresponding journal paper which has been published in Plos One.
 """
 
@@ -149,7 +149,7 @@ class Subesco(tfds.core.GeneratorBasedBuilder):
         extract_path = dl_manager.extract(zip_path)
 
         items_and_groups = []
-        for fname in tf.io.gfile.glob('{}/*/*_mono.wav'.format(extract_path)):
+        for fname in tf.io.gfile.glob('{}/*/*.wav'.format(extract_path)):
             speaker_id = os.path.basename(fname).split('_')[2]
             items_and_groups.append((fname, speaker_id))
 
